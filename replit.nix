@@ -1,5 +1,6 @@
 { pkgs }: {
   deps = [
+    pkgs.mkinitcpio-nfs-utils
     pkgs.python38Full
     pkgs.replitPackages.prybar-python3
   ];

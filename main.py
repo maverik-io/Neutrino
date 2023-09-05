@@ -20,7 +20,7 @@ load_dotenv()
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
-bot = commands.Bot(command_prefix="$")
+bot = commands.Bot(command_prefix=".")
 start_time = None
 
 
@@ -48,7 +48,7 @@ async def on_message(message):
                 await message.add_reaction('🤬')
                 l.append(i)
             if l:
-              await message.channel.send(f"```My dear {message.author},\nI\
+              await message.channel.send(f"```My dear {message.author},\nI \
 just want you to know that I am mortified by your use of '{', '.join(l)}'```")
         
         
@@ -70,10 +70,48 @@ async def ping(ctx):
 
 
 # points stuff---------------------------------------
+@bot.command(help="Leaderboard.")
+async def rich(ctx):
+    l = list((Currency[i],i) for i in Currency)
+    l.sort()
+    l = l[::-1]
+    leaderboard = [
+        [str(c+1)  for c in range(len(l))],
+        [str(i[0]) for i in l],
+        [str(j[1]) for j in l]
+    ]
+    embed = discord.Embed(
+        title = "LeaderBoard",
+        color =  discord.Colour.blue()
+    )
+
+    embed.add_field(name='Rank', value='\n'.join(leaderboard[0]), inline=True)
+    embed.add_field(name='Balance', value='\n'.join(leaderboard[1]), inline=True)
+    embed.add_field(name='Name', value='\n'.join(leaderboard[2]), inline=True)
+    
+
+    await ctx.channel.send(embed=embed)
+    
+
+        
+        
 @bot.command(help="Gives balance of server members")
 async def bal(ctx,user = None):
     if user is None:
-        string = '\n'.join([f'{name} : ∆{Currency[name]}' for name in Currency])
+        users = [user.split('#')[0] for user in Currency]
+        bals  = [str(Currency[user])  for user in Currency]
+
+        embed=discord.Embed(
+        title="Balances",
+        color=discord.Color.green()
+    )    
+        
+        embed.add_field(name='Name', value='\n'.join(users), inline=True)
+        embed.add_field(name='Balance', value='\n'.join(bals), inline=True)
+        
+
+
+        await ctx.channel.send(embed=embed)
     else:
         user = str(bot.get_user(int(user[2:-1])))
         string = f'{user} : {Currency[user]}'
