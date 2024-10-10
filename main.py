@@ -33,35 +33,38 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.guild.id in [1108293590679031918,935202323003752508]:
-        l = []
-        if message.author != bot.user:
-            if bot.user.mention in message.content:
-              await message.channel.send("Please refrain from mentioning me. (I'll kill you!)")
-            if message.content == "hello":
-              await message.channel.send("Am I supposed to wave back at your ugly face?")
-            if message.content.lower().find('egg') != -1:
-              await message.add_reaction('🥚')
+    try:
+        if message.guild.id in [1108293590679031918,935202323003752508]:
+            l = []
+            if message.author != bot.user:
+                if bot.user.mention in message.content:
+                  await message.channel.send("Please refrain from mentioning me. (I'll kill you!)")
+                if message.content == "hello":
+                  await message.channel.send("Am I supposed to wave back at your ugly face?")
+                if message.content.lower().find('egg') != -1:
+                  await message.add_reaction('🥚')
+            
+                for i in badWords:
+                  if i in message.content.lower() and message.author != bot.user:
+                    await message.add_reaction('🤬')
+                    l.append(i)
+                if l:
+                  await message.channel.send(f"```My dear {message.author},\nI \
+    just want you to know that I am mortified by your use of '{', '.join(l)}'```")
+            
+            
+                if message.channel.id == 1120674868397101067:
+                    try:
+                        Currency[str(message.author)] += 1
+                        with open('Vars.dat','wb') as f:
+                            pickle.dump(Currency,f)
+                    except Exception as e:
+                        await message.channel.send(f'```{e} is not a valid user```')
         
-            for i in badWords:
-              if i in message.content.lower() and message.author != bot.user:
-                await message.add_reaction('🤬')
-                l.append(i)
-            if l:
-              await message.channel.send(f"```My dear {message.author},\nI \
-just want you to know that I am mortified by your use of '{', '.join(l)}'```")
-        
-        
-            if message.channel.id == 1120674868397101067:
-                try:
-                    Currency[str(message.author)] += 1
-                    with open('Vars.dat','wb') as f:
-                        pickle.dump(Currency,f)
-                except Exception as e:
-                    await message.channel.send(f'```{e} is not a valid user```')
-    
-        
-        await bot.process_commands(message)
+            
+            await bot.process_commands(message)
+    except:
+        await message.author.send("`Neutrino Currently only works in servers :( `")
 
 
 @bot.command(help="Check if the bot is awake")
